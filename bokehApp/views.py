@@ -1,33 +1,35 @@
-from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
-from bokeh.plotting import figure, output_file
+from django.shortcuts import render
+from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import HoverTool, LassoSelectTool, WheelZoomTool, PointDrawTool, ColumnDataSource
+
 from bokeh.palettes import Category20c, Spectral6
 from bokeh.transform import cumsum
+from .models import Products
+from .models import CurrentStats
 from numpy import pi
 # import pandas as pd
 from bokeh.resources import CDN
 
-def programming(request):
-    lang = ['Imcoming Water', 'Outgoing Water']
-    counts = [190, 175]
 
-    p = figure(x_range=lang, plot_height=450, title="Temperature",
-               toolbar_location="below", tools="pan,wheel_zoom,box_zoom,reset, tap")
+def products(request):
+    items = ["Incoming Water", "Outgoing Water"]
+    waterInn = CurrentStats.objects.values()[:1]
+    waterIn = 0
+    waterOut = 0
+    counts = []
 
-    source = ColumnDataSource(data=dict(lang=lang, counts=counts, color=Spectral6))
-    p.add_tools(LassoSelectTool())
-    p.add_tools(WheelZoomTool())
+    for i in waterInn:
+        if "waterIn" in i.values():
+            waterIn += CurrentStats.waterIn
+        if "waterOut" in i.values():
+            waterOut += CurrentStats.waterOut
+    counts.extend([waterIn, waterOut])
 
-    p.vbar(x='lang', top='counts', width=.8, color='color', legend="lang", source=source)
-    p.legend.orientation = "horizontal"
-    p.legend.location = "top_center"
-
-    p.xgrid.grid_line_color = "black"
-    p.y_range.start = 0
-    p.line(x=lang, y=counts, color="black", line_width=2)
-
-    script, div = components(p)
-
-    return render(request, 'starter.html', {'script': script, 'div': div})
+    plot = figure(x_range=items, plot_height=600, plot_width=600, title="Temperature", toolbar_location="right", tools="pan,wheel_zoom,box_zoom,reset,tap")
+    plot.title.text_font_size = '20pt'
+    plot.xaxis.major_label_text_font_size = '14pt'
+    plot.vbar(items, top=counts, width=.4, color="navy", legend="Current Temperature")
+    plot.legend.label_text_font_size = '14pt'
+    script, div = components(plot)
+    return render(request, 'starter.html', {'script': script, 'div': div, 'waterInn': waterInn, 'counts': counts, 'items': items, 'waterIn': waterIn, 'waterOut': waterOut})

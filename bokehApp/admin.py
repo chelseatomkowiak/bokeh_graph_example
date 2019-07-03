@@ -1,3 +1,6 @@
 from django.contrib import admin
+from bokehApp.models import Products
+from bokehApp.models import CurrentStats
 
-# Register your models here.
+admin.site.register(Products)
+admin.site.register(CurrentStats)
