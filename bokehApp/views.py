@@ -15,8 +15,9 @@ from bokeh.resources import CDN
 def products(request):
     items = ["Incoming Water", "Outgoing Water"]
     waterInn = CurrentStats.objects.values()[:1]
+#    test = CurrentStats.objects.filter('updated_at').values('waterOut')
     waterIn = 0
-    waterOut = 0
+    waterOut = 175
     counts = []
 
     for i in waterInn:

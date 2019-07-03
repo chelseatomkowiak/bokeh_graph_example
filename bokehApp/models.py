@@ -22,5 +22,5 @@ class CurrentStats(models.Model):
     waterOut = models.IntegerField(null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
+    def __int__(self):
         return '{}: - {}: - {}:'.format(self.waterIn, self.waterOut, self.updated_at)
