@@ -7,5 +7,5 @@ class CurrentStats(models.Model):
     waterOut = models.IntegerField(null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
-    def __int__(self):
-        return self.waterIn
+    def __str__(self):
+        return self.waterOut
